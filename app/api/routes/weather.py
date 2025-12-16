@@ -3,13 +3,15 @@ Weather API routes.
 This demonstrates proper importing from nested service modules.
 """
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException, Query
-from typing import Any, Dict, List
+
+from app.core.config import settings
 
 # Example of importing from deeply nested module structure
 # Note: We use absolute imports starting from 'app'
 from app.services.weather_service import weather_service
-from app.core.config import settings
 
 # Create a router instance
 router = APIRouter(
@@ -18,14 +20,14 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=Dict[str, Any])
+@router.get("/", response_model=dict[str, Any])
 async def get_weather(
     city: str = Query(
         ...,
         description="Name of the city to get weather for",
-        examples=["New York", "London", "Tokyo"]
-    )
-) -> Dict[str, Any]:
+        examples=["New York", "London", "Tokyo"],
+    ),
+) -> dict[str, Any]:
     """
     Get current weather for a specific city.
 
@@ -49,11 +51,11 @@ async def get_weather(
         weather_data = weather_service.get_weather(city)
         return weather_data
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
 
-@router.get("/cities", response_model=List[str])
-async def get_available_cities() -> List[str]:
+@router.get("/cities", response_model=list[str])
+async def get_available_cities() -> list[str]:
     """
     Get list of cities with available weather data.
 
@@ -63,11 +65,13 @@ async def get_available_cities() -> List[str]:
     return weather_service.get_available_cities()
 
 
-@router.get("/heat-index", response_model=Dict[str, float])
+@router.get("/heat-index", response_model=dict[str, float])
 async def calculate_heat_index(
-    temperature: float = Query(..., description="Temperature in Fahrenheit", ge=-50, le=150),
-    humidity: float = Query(..., description="Humidity percentage", ge=0, le=100)
-) -> Dict[str, float]:
+    temperature: float = Query(
+        ..., description="Temperature in Fahrenheit", ge=-50, le=150
+    ),
+    humidity: float = Query(..., description="Humidity percentage", ge=0, le=100),
+) -> dict[str, float]:
     """
     Calculate heat index from temperature and humidity.
 
@@ -83,15 +87,11 @@ async def calculate_heat_index(
         Dictionary with heat index value
     """
     heat_index = weather_service.calculate_heat_index(temperature, humidity)
-    return {
-        "temperature": temperature,
-        "humidity": humidity,
-        "heat_index": heat_index
-    }
+    return {"temperature": temperature, "humidity": humidity, "heat_index": heat_index}
 
 
-@router.get("/info", response_model=Dict[str, str])
-async def get_api_info() -> Dict[str, str]:
+@router.get("/info", response_model=dict[str, str])
+async def get_api_info() -> dict[str, str]:
     """
     Get API information.
 

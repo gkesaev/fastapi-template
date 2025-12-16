@@ -3,8 +3,8 @@ Weather service module containing business logic.
 This demonstrates how to organize service/business logic layer.
 """
 
-from typing import Any, Dict, List
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any
 
 # Import from core configuration module (example of cross-module import)
 from app.core.config import settings
@@ -25,7 +25,7 @@ class WeatherService:
             "Sydney": {"temp": 77.9, "humidity": 60, "condition": "Clear"},
         }
 
-    def get_weather(self, city: str) -> Dict[str, Any]:
+    def get_weather(self, city: str) -> dict[str, Any]:
         """
         Get weather information for a specific city.
 
@@ -48,12 +48,12 @@ class WeatherService:
             weather["warning"] = "Temperature exceeds maximum threshold!"
 
         # Add metadata
-        weather["timestamp"] = datetime.now(timezone.utc).isoformat()
+        weather["timestamp"] = datetime.now(UTC).isoformat()
         weather["city"] = city
 
         return weather
 
-    def get_available_cities(self) -> List[str]:
+    def get_available_cities(self) -> list[str]:
         """
         Get list of cities with available weather data.
 

@@ -1,5 +1,9 @@
 # Weather API - FastAPI Template Project
 
+[![CI](https://github.com/gkesaev/fastapi-template/actions/workflows/ci.yml/badge.svg)](https://github.com/gkesaev/fastapi-template/actions/workflows/ci.yml)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+
 A modern, production-ready FastAPI template with proper project structure, demonstrating best practices for organizing modules, imports, testing, and containerization.
 
 ## Project Structure
@@ -113,6 +117,38 @@ pytest -v  # verbose output
 pytest --cov=app  # with coverage (requires pytest-cov)
 ```
 
+### Code Quality (Linting & Formatting)
+
+This project uses **Ruff** for both linting and formatting - a fast, modern Python tool that combines the functionality of Black, isort, and flake8.
+
+1. Install development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+2. Run linter:
+
+```bash
+ruff check .              # Check for issues
+ruff check --fix .        # Auto-fix issues
+```
+
+3. Run formatter:
+
+```bash
+ruff format .             # Format all files
+ruff format --check .     # Check formatting without changes
+```
+
+4. Run both (recommended before committing):
+
+```bash
+ruff check --fix . && ruff format .
+```
+
+**Configuration:** See `pyproject.toml` for Ruff settings.
+
 ### Docker Development
 
 1. Build and run with Docker Compose:
@@ -219,6 +255,49 @@ This project uses **absolute imports** from the `app` package:
 - Easier to refactor and maintain
 - Standard practice for Python packages
 
+## CI/CD Pipeline
+
+This project includes a comprehensive GitHub Actions CI/CD pipeline that runs on:
+- Every push to `main` branch
+- Every pull request to `main` branch
+
+### Pipeline Jobs
+
+1. **Lint and Format Check** (`lint-and-format`)
+   - Runs Ruff linter to check code quality
+   - Runs Ruff formatter to ensure consistent code style
+   - Fails if any issues are found
+
+2. **Run Tests** (`test`)
+   - Executes full test suite with pytest
+   - Generates coverage reports
+   - Uploads coverage to Codecov (if configured)
+
+3. **Docker Build Test** (`docker-build`)
+   - Builds Docker image to ensure it compiles
+   - Runs tests inside Docker container
+   - Uses GitHub Actions cache for faster builds
+
+### Workflow File
+
+See `.github/workflows/ci.yml` for the complete CI configuration.
+
+### Pre-commit Checks (Recommended)
+
+Before pushing, run these commands locally:
+
+```bash
+# Run linter and formatter
+ruff check --fix . && ruff format .
+
+# Run tests
+pytest -v
+
+# Or run everything with Docker
+docker-compose up --build
+docker run --rm $(docker build -q .) pytest -v
+```
+
 ## Package Versions (Latest as of January 2025)
 
 - FastAPI: 0.115.6
@@ -246,11 +325,14 @@ To extend this template:
 - Configuration management with Pydantic Settings
 - Layered architecture (routes → services → core)
 - Comprehensive testing with pytest
+- **Code quality with Ruff** (linting + formatting)
+- **CI/CD with GitHub Actions** (lint, test, build on every PR/push)
 - Docker multi-stage builds
 - Non-root Docker user for security
 - Health checks for monitoring
 - Type hints for better IDE support
 - API documentation with OpenAPI
+- Modern Python 3.12+ syntax (`dict` instead of `Dict`, `UTC` instead of `timezone.utc`)
 
 ## License
 
