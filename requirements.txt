@@ -12,5 +12,5 @@ pytest-asyncio==0.24.0
 httpx==0.28.1
 
 # Optional but recommended
-python-multipart==0.0.20  # For form data
+python-multipart==0.0.22  # For form data
 python-dotenv==1.0.1      # For .env file support
